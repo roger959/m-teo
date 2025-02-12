@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Météo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main-container">
+        <header>
+            <h1>App Météo</h1>
+        </header>
+        <div class="container">
+            <button onclick="getLocation()">Géolocalisez-moi</button>
+            <input type="text" id="cityInput" placeholder="Entrez le nom de la ville">
+            <button onclick="getWeatherByCity()">Rechercher</button>
+            <div id="demo"></div>
+            <div id="weather"></div>
+        </div>
+        <footer>
+            <p>© 2025 App Météo</p>
+        </footer>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
