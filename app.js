@@ -1,11 +1,30 @@
 //// APP METEO 
 
-let apiKey = "8ca16b4b9256470f70e938b61db98f2a";
 let x = document.getElementById("demo");
 let weatherDiv = document.getElementById("weather");
 
+async function fetchWeather(query) {
+    const response = await fetch(`/api/weather?${query}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Erreur météo.");
+    }
+
+    return data;
+}
+
+function formatWeatherDescription(description) {
+    if (!description) {
+        return "Conditions indisponibles";
+    }
+
+    return description.charAt(0).toUpperCase() + description.slice(1);
+}
+
 function getLocation() {
     if (navigator.geolocation) {
+        x.innerHTML = "Localisation en cours...";
         navigator.geolocation.getCurrentPosition(showPosition, showError);
     } else {
         x.innerHTML = "La géolocalisation n'est pas supportée par ce navigateur.";
@@ -15,25 +34,33 @@ function getLocation() {
 function showPosition(position) {
     let lat = position.coords.latitude;
     let lng = position.coords.longitude;
-    x.innerHTML = "Latitude: " + lat + "<br>Longitude: " + lng;
-    let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${apiKey}&units=metric`;
+    x.innerHTML = "Coordonnées détectées. Récupération de la météo locale...";
+    const query = new URLSearchParams({ lat, lon }).toString();
 
-    fetch(url)
-    .then(res => res.json())
+    fetchWeather(query)
     .then(data => {
         console.log(data);
         displayWeather(data);
-        x.innerHTML += `<br>Lieu: ${data.name}, ${data.sys.country}`;
+        x.innerHTML = `Position détectée: ${data.name}, ${data.sys.country}`;
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        console.log(err);
+        x.innerHTML = "Impossible de récupérer la météo locale.";
+    });
 }
 
 function getWeatherByCity() {
     let city = document.getElementById("cityInput").value;
-    let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
-    fetch(url)
-    .then(res => res.json())
+    if (!city.trim()) {
+        x.innerHTML = "Saisissez d'abord le nom d'une ville.";
+        return;
+    }
+
+    x.innerHTML = "Analyse météo en cours...";
+    const query = new URLSearchParams({ city: city.trim() }).toString();
+
+    fetchWeather(query)
     .then(data => {
         console.log(data);
         displayWeather(data);
@@ -41,7 +68,7 @@ function getWeatherByCity() {
     })
     .catch(err => {
         console.log(err);
-        x.innerHTML = "Ville non trouvée.";
+        x.innerHTML = err.message === "city not found" ? "Ville non trouvée." : "Impossible de récupérer la météo.";
     });
 }
 
@@ -63,11 +90,40 @@ function showError(error) {
 }
 
 function displayWeather(data) {
+    const description = formatWeatherDescription(data.weather[0].description);
     let weather = `
-        <h2>${data.name}, ${data.sys.country}</h2>
-        <p>Température: ${data.main.temp}°C</p>
-        <p>Météo: ${data.weather[0].description}</p>
-        <img src="http://openweathermap.org/img/wn/${data.weather[0].icon}.png" alt="Icone météo">
+        <article class="weather-card">
+            <div class="weather-head">
+                <div class="weather-location">
+                    <h3>${data.name}, ${data.sys.country}</h3>
+                    <p>Vision météo actuelle</p>
+                </div>
+                <img class="weather-icon" src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="Icône météo">
+            </div>
+
+            <div class="weather-overview">
+                <div class="temperature">${Math.round(data.main.temp)}°</div>
+                <div>
+                    <p class="weather-summary">${description}</p>
+                    <p>Ressenti ${Math.round(data.main.feels_like)}°C</p>
+                </div>
+            </div>
+
+            <div class="weather-meta">
+                <div class="weather-meta-card">
+                    <span>Humidité</span>
+                    <strong>${data.main.humidity}%</strong>
+                </div>
+                <div class="weather-meta-card">
+                    <span>Vent</span>
+                    <strong>${Math.round(data.wind.speed)} m/s</strong>
+                </div>
+                <div class="weather-meta-card">
+                    <span>Pression</span>
+                    <strong>${data.main.pressure} hPa</strong>
+                </div>
+            </div>
+        </article>
     `;
     weatherDiv.innerHTML = weather;
 }

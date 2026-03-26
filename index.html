@@ -4,22 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>App Météo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="main-container">
-        <header>
-            <h1>App Météo</h1>
-        </header>
-        <div class="container">
-            <button onclick="getLocation()">Géolocalisez-moi</button>
-            <input type="text" id="cityInput" placeholder="Entrez le nom de la ville">
-            <button onclick="getWeatherByCity()">Rechercher</button>
-            <div id="demo"></div>
-            <div id="weather"></div>
-        </div>
-        <footer>
-            <p>© 2025 App Météo</p>
+    <div class="page-shell">
+        <main class="main-container">
+            <section class="hero-panel">
+                <p class="eyebrow">Radar climatique</p>
+                <h1>Une météo plus sensorielle que technique.</h1>
+                <p class="hero-copy">
+                    Consultez l'atmosphère d'une ville dans une interface plus immersive, plus lisible,
+                    et pensée comme un tableau de bord vivant.
+                </p>
+
+                <div class="hero-stats">
+                    <article class="stat-card">
+                        <span class="stat-value">Live</span>
+                        <span class="stat-label">Recherche instantanée</span>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-value">GPS</span>
+                        <span class="stat-label">Météo locale immédiate</span>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-value">UX</span>
+                        <span class="stat-label">Lecture claire des données</span>
+                    </article>
+                </div>
+            </section>
+
+            <section class="control-panel">
+                <header class="panel-header">
+                    <p class="panel-kicker">Weather Report</p>
+                    <h2>Explorez une ville ou utilisez votre position.</h2>
+                </header>
+
+                <div class="search-panel">
+                    <label class="input-label" for="cityInput">Ville</label>
+                    <input type="text" id="cityInput" placeholder="Paris, Tokyo, Montréal...">
+
+                    <div class="action-row">
+                        <button class="primary-button" onclick="getWeatherByCity()">Analyser la ville</button>
+                        <button class="secondary-button" onclick="getLocation()">Utiliser ma position</button>
+                    </div>
+
+                    <div id="demo" class="status-panel">
+                        Entrez une ville ou activez la géolocalisation pour afficher les conditions en direct.
+                    </div>
+                </div>
+
+                <div id="weather" class="weather-stage">
+                    <div class="weather-placeholder">
+                        <span class="placeholder-badge">En attente</span>
+                        <p>Les informations météo apparaîtront ici avec la température, le ressenti et les indicateurs clés.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <p>© 2026 Weather Report</p>
         </footer>
     </div>
     <script src="app.js"></script>
